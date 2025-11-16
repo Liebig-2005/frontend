@@ -36,9 +36,10 @@ export default function ChatbotPage() {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:8000/api/chatbot/", {
-        message: input,
-      });
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/chatbot/`,   // ✅ use env variable
+        { message: input }
+      );
 
       // ✅ Backend returns { "response": "..." }
       const botReply = { sender: "bot", text: res.data.response };
@@ -49,7 +50,7 @@ export default function ChatbotPage() {
       if (err.response) {
         errorMsg = `Error: ${err.response.data?.detail || err.response.statusText || "Failed to get response"}`;
       } else if (err.request) {
-        errorMsg = "Cannot connect to server. Please make sure the backend is running on http://localhost:8000";
+        errorMsg = `Cannot connect to server. Please make sure the backend is running at ${process.env.REACT_APP_API_URL}`;
       }
       const errorMessage = { sender: "bot", text: errorMsg };
       setMessages((prev) => [...prev, errorMessage]);
@@ -78,11 +79,10 @@ export default function ChatbotPage() {
                 className={`flex mb-2 ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`px-4 py-3 rounded-2xl max-w-[70%] break-words ${
-                    msg.sender === "user"
+                  className={`px-4 py-3 rounded-2xl max-w-[70%] break-words ${msg.sender === "user"
                       ? "bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 text-white font-medium shadow-lg"
                       : "backdrop-blur-xl bg-white/60 border border-white/50 text-gray-800 font-medium shadow-md"
-                  }`}
+                    }`}
                 >
                   {msg.text}
                 </div>
